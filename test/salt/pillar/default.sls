@@ -36,7 +36,7 @@ icinga2:
         ca_file: /etc/ssl/certs/ca-certificates.crt
 
   postgres:
-    use_formula: true  # set to true if you are using postgres-formula
+    use_formula: false  # set to true if you are using postgres-formula
 
   nrpe:  # deprecated
     config:
