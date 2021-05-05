@@ -1,0 +1,148 @@
+= icinga2-formula
+
+https://travis-ci.com/saltstack-formulas/icinga2-formula[image:https://travis-ci.com/saltstack-formulas/icinga2-formula.svg?branch=master[Travis CI Build Status]]
+https://github.com/semantic-release/semantic-release[image:https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg[Semantic Release]]
+
+A salt formula that installs and configures icinga2, currently on Debian
+and Ubuntu only, but other installation source can be easily added.
+Configuration via pillar currently for hosts and services only.
+
+Suggestions, pull-requests, bug reports and comments are welcome.
+
+== General notes
+
+See the full
+https://docs.saltstack.com/en/latest/topics/development/conventions/formulas.html[SaltStack
+Formulas installation and usage instructions].
+
+If you are interested in writing or contributing to formulas, please pay
+attention to the
+https://docs.saltstack.com/en/latest/topics/development/conventions/formulas.html#writing-formulas[Writing
+Formula Section].
+
+If you want to use this formula, please pay attention to the `FORMULA`
+file and/or `git tag`, which contains the currently released version.
+This formula is versioned according to http://semver.org/[Semantic
+Versioning].
+
+See
+https://docs.saltstack.com/en/latest/topics/development/conventions/formulas.html#versioning[Formula
+Versioning Section] for more details.
+
+If you need (non-default) configuration, please pay attention to the
+`pillar.example` file and/or link:#_special_notes[Special notes] section.
+
+== Contributing to this repo
+
+*Commit message formatting is significant!!*
+
+Please see
+xref:main::CONTRIBUTING.adoc[How
+to contribute] for more details.
+
+== Special notes
+
+None
+
+== Available states
+
+=== `icinga2`
+
+Installs and configures the icinga2 package. Includes
+`icinga.repositories`.
+
+=== `icinga2.icinga-web2`
+
+Includes:
+
+* `icinga2.icinga-web2-core`
+* `icinga2.icinga-web2-database`
+* `icinga2.pgsql-ido`
+* `icinga2.postgresql-client`
+* `icinga2.postgresql-server`
+
+=== `icinga2.nrpe-server` (DEPRECATED)
+
+Installs and configures the nrpe-server to perform checks on non-local
+hosts.
+
+== States which are independent (reusable) building blocks
+
+=== `icinga2.icinga-web2-database`
+
+Creates the DB user and the DB itself. (Makes only sense if the DB shall
+run on the same host as Icinga2)
+
+=== `icinga2.icinga-web2-core`
+
+Installs the (new) Icinga Web UI.
+
+=== `icinga2.pgsql-ido`
+
+Installs and configures `icinga2-ido-pgsql`. You may want to add
+`icinga2.postgresql-client`
+
+=== `icinga2.postgresql-client`
+
+Installs PostgreSQL client.
+
+=== `icinga2.postgresql-server`
+
+Installs PostgreSQL server.
+
+=== `icinga2.repositories`
+
+Adds the Debian / Ubuntu repository to get Icinga2 packages from if (and
+only if) the machine happens to run one of the mentioned operating
+systems.
+
+=== `icinga2.check_command.openvpn`
+
+Sets up CheckCommand `openvpn` using
+[.title-ref]#<https://github.com/liquidat/nagios-icinga-openvpn>#.
+
+=== `icinga2.notification.xmpp`
+
+Sets up notification via XMPP using
+https://lab.louiz.org/poezio/slixmpp[slixmpp].
+
+== Testing
+
+Linux testing is done with `kitchen-salt`.
+
+=== Requirements
+
+* Ruby
+* Docker
+
+[source,bash]
+----
+$ gem install bundler
+$ bundle install
+$ bin/kitchen test [platform]
+----
+
+Where `[platform]` is the platform name defined in `kitchen.yml`, e.g.
+`debian-9-2019-2-py3`.
+
+=== `bin/kitchen converge`
+
+Creates the docker instance and runs the `template` main state, ready
+for testing.
+
+=== `bin/kitchen verify`
+
+Runs the `inspec` tests on the actual instance.
+
+=== `bin/kitchen destroy`
+
+Removes the docker instance.
+
+=== `bin/kitchen test`
+
+Runs all of the stages above in one go: i.e. `destroy` + `converge` +
+`verify` + `destroy`.
+
+=== `bin/kitchen login`
+
+Gives you SSH access to the instance for manual testing.
